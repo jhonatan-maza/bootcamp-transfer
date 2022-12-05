@@ -9,7 +9,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @SpringBootApplication
 @EnableEurekaClient
 @OpenAPIDefinition(info =
-@Info(title = "Transfer API", version = "1.0", description = "Documentation Transfer API v1.0")
+	@Info(title = "Transfer API", version = "1.0", description = "Documentation Transfer API v1.0")
 )
 public class BootcampApplication {
 

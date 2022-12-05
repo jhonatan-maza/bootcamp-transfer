@@ -15,10 +15,10 @@ import java.util.Date;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/transaction")
-public class TransactionController {
+@RequestMapping(value = "/transfer")
+public class TransferController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TransactionController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TransferController.class);
 	@Autowired
 	private TransferService transferService;
 
