@@ -25,7 +25,7 @@ public class TransferServiceImpl implements TransferService {
     public Flux<Transfer> findByAccountNumber(String accountNumber) {
         Flux<Transfer> transactions = transferRepository
                 .findAll()
-                .filter(x -> x.getAccountNumber().equals(accountNumber));
+                .filter(x -> x.getAccountNumberOrigin().equals(accountNumber));
         return transactions;
     }
 
@@ -64,7 +64,7 @@ public class TransferServiceImpl implements TransferService {
             dataTransfer.setCreationDate(transactionMono.block().getCreationDate());
             return transferRepository.save(dataTransfer);
         }catch (Exception e){
-            return Mono.<Transfer>error(new Error("La transaccion " + dataTransfer.getAccountNumber() + " NO EXISTE"));
+            return Mono.<Transfer>error(new Error("La transaccion " + dataTransfer.getTransferNumber() + " NO EXISTE"));
         }
     }
 
@@ -79,7 +79,6 @@ public class TransferServiceImpl implements TransferService {
             return Mono.<Void>error(new Error("La transaccion numero" + Number+ " NO EXISTE"));
         }
     }
-
 
 
 }

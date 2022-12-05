@@ -42,15 +42,15 @@ public class TransferController {
 	//Transaction  by transactionNumber
 	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
 	@GetMapping("/findByTransferNumber/{numberTransfer}")
-	public Mono<Transfer> findByTransferNumber(@PathVariable("numberTransaction") String numberTransaction) {
-		LOGGER.info("Searching transfer by numberTransaction: " + numberTransaction);
-		return transferService.findByNumber(numberTransaction);
+	public Mono<Transfer> findByTransferNumber(@PathVariable("numberTransfer") String numberTransfer) {
+		LOGGER.info("Searching transfer by numberTransaction: " + numberTransfer);
+		return transferService.findByNumber(numberTransfer);
 	}
 
 	//Save transaction
 	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
 	@PostMapping(value = "/saveTransfer")
-	public Mono<Transfer> saveTransfer(@RequestBody Transfer dataTransfer, @PathVariable("typeTransfer") String typeTransfer){
+	public Mono<Transfer> saveTransfer(@RequestBody Transfer dataTransfer){
 		Mono.just(dataTransfer).doOnNext(t -> {
 
 					t.setCreationDate(new Date());
@@ -59,15 +59,30 @@ public class TransferController {
 				}).onErrorReturn(dataTransfer).onErrorResume(e -> Mono.just(dataTransfer))
 				.onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
 
-		Mono<Transfer> transactionMono = transferService.saveTransfer(dataTransfer,typeTransfer);
+		Mono<Transfer> transactionMono = transferService.saveTransfer(dataTransfer,"deposit");
+		return transactionMono;
+	}
+
+	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
+	@PostMapping(value = "/saveTransferDestination")
+	public Mono<Transfer> saveTransferDestination(@RequestBody Transfer dataTransfer, @PathVariable("typeTransfer") String typeTransfer){
+		Mono.just(dataTransfer).doOnNext(t -> {
+
+					t.setCreationDate(new Date());
+					t.setModificationDate(new Date());
+
+				}).onErrorReturn(dataTransfer).onErrorResume(e -> Mono.just(dataTransfer))
+				.onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
+
+		Mono<Transfer> transactionMono = transferService.saveTransfer(dataTransfer,"withdraw");
 		return transactionMono;
 	}
 
 	//Update active
 	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
-	@PutMapping("/updateTransafer/{numberTransfer}")
+	@PutMapping("/updateTransfer/{numberTransfer}")
 	public Mono<Transfer> updateTransfer(@PathVariable("numberTransfer") String numberTransfer,
-											@Valid @RequestBody Transfer dataTransfer) {
+										 @Valid @RequestBody Transfer dataTransfer) {
 		Mono.just(dataTransfer).doOnNext(t -> {
 
 					t.setTransferNumber(numberTransfer);
@@ -96,6 +111,7 @@ public class TransferController {
 		Mono<Transfer> staffMono= Mono.just(activeStaff);
 		return staffMono;
 	}
+
 
 
 

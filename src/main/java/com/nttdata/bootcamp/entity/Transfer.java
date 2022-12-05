@@ -23,7 +23,8 @@ public class Transfer {
     private String id;
 
     private String dni;
-    private String accountNumber;
+    private String accountNumberOrigin;
+    private String accountNumberDestination;
     private String typeAccount;
 
     private Boolean deposit;
@@ -40,5 +41,6 @@ public class Transfer {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @LastModifiedDate
     private Date modificationDate;
+
 
 }
