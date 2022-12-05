@@ -1,8 +1,10 @@
 spring:
   application:
-    name: bootcamp-transaction
+    name: bootcamp-transfer
+  config:
+    import: "optional:configserver:http://localhost:7000"
   cloud:
     config:
       enabled: true
-      label: master 
+      label: master
       uri: http://localhost:7000
