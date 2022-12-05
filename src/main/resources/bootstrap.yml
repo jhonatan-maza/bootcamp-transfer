@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: bootcamp-transaction
+  cloud:
+    config:
+      enabled: true
+      label: master 
+      uri: http://localhost:7000
