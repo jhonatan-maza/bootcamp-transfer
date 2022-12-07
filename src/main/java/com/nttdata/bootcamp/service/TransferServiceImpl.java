@@ -38,18 +38,8 @@ public class TransferServiceImpl implements TransferService {
         return transaction;
     }
 
-    public Mono<Transfer> saveTransfer(Transfer dataTransfer, String typeTransfer ) {
+    public Mono<Transfer> saveTransfer(Transfer dataTransfer ) {
         dataTransfer.setStatus("active");
-
-        if(typeTransfer.equals("deposit")){
-            dataTransfer.setDeposit(true);
-            dataTransfer.setWithdraw(false);
-        }
-        else if(typeTransfer.equals("withdraw")){
-            dataTransfer.setDeposit(false);
-            dataTransfer.setWithdraw(true);
-        }
-
         return transferRepository.save(dataTransfer);
 
     }
@@ -59,24 +49,27 @@ public class TransferServiceImpl implements TransferService {
 
         Mono<Transfer> transactionMono = findByNumber(dataTransfer.getTransferNumber());
         try {
-            dataTransfer.setDni(transactionMono.block().getDni());
+            dataTransfer.setDniOrigin(transactionMono.block().getDniOrigin());
+            dataTransfer.setDniDestination(transactionMono.block().getDniDestination());
+            dataTransfer.setAccountNumberOrigin(transactionMono.block().getAccountNumberOrigin());
+            dataTransfer.setAccountNumberDestination(transactionMono.block().getAccountNumberDestination());
             dataTransfer.setAmount(transactionMono.block().getAmount());
             dataTransfer.setCreationDate(transactionMono.block().getCreationDate());
             return transferRepository.save(dataTransfer);
         }catch (Exception e){
-            return Mono.<Transfer>error(new Error("La transaccion " + dataTransfer.getTransferNumber() + " NO EXISTE"));
+            return Mono.<Transfer>error(new Error("The transfer " + dataTransfer.getTransferNumber() + " do not exists"));
         }
     }
 
     @Override
     public Mono<Void> deleteTransfer(String Number) {
-        Mono<Transfer> transactionMono = findByNumber(Number);
+        Mono<Transfer> transferMono = findByNumber(Number);
         try {
-            Transfer transfer = transactionMono.block();
+            Transfer transfer = transferMono.block();
             return transferRepository.delete(transfer);
         }
         catch (Exception e){
-            return Mono.<Void>error(new Error("La transaccion numero" + Number+ " NO EXISTE"));
+            return Mono.<Void>error(new Error("The transfer number" + Number+ " do not exists"));
         }
     }
 

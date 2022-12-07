@@ -11,7 +11,7 @@ public interface TransferService {
     public Flux<Transfer> findByAccountNumber(String accountNumber);
 
     public Mono<Transfer> findByNumber(String number);
-    public Mono<Transfer> saveTransfer(Transfer active, String typeTransfer);
+    public Mono<Transfer> saveTransfer(Transfer active);
     public Mono<Transfer> updateTransfer(Transfer dataActive);
     public Mono<Void> deleteTransfer(String accountNumber);
 

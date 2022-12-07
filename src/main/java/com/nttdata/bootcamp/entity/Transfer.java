@@ -22,14 +22,12 @@ public class Transfer {
     @Id
     private String id;
 
-    private String dni;
+    private String dniOrigin;
+    private String dniDestination;
     private String accountNumberOrigin;
     private String accountNumberDestination;
-    private String typeAccount;
-
-    private Boolean deposit;
-    private Boolean withdraw;
-
+    private String typeAccountOrigin;
+    private String typeAccountDestination;
     private String transferNumber;
     private Double amount;
     private String status;

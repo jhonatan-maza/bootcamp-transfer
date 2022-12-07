@@ -22,23 +22,23 @@ public class TransferController {
 	private TransferService transferService;
 
 
-	//Transactions search
+	//Transfer search
 	@GetMapping("/")
 	public Flux<Transfer> findAllTransfer() {
-		Flux<Transfer> transactions = transferService.findAll();
-		LOGGER.info("Registered transfer: " + transactions);
-		return transactions;
+		Flux<Transfer> transferFlux = transferService.findAll();
+		LOGGER.info("Registered transfer: " + transferFlux);
+		return transferFlux;
 	}
 
-	//Transactions by AccountNumber
+	//Transfer by AccountNumber
 	@GetMapping("/findAllTransferByNumber/{accountNumber}")
 	public Flux<Transfer> findAllTransferByNumber(@PathVariable("accountNumber") String accountNumber) {
-		Flux<Transfer> transactions = transferService.findByAccountNumber(accountNumber);
-		LOGGER.info("Registered transfer of account number: "+accountNumber +"-" + transactions);
-		return transactions;
+		Flux<Transfer> transferFlux = transferService.findByAccountNumber(accountNumber);
+		LOGGER.info("Registered transfer of account number: "+accountNumber +"-" + transferFlux);
+		return transferFlux;
 	}
 
-	//Transaction  by transactionNumber
+	//Transfer  by transactionNumber
 	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
 	@GetMapping("/findByTransferNumber/{numberTransfer}")
 	public Mono<Transfer> findByTransferNumber(@PathVariable("numberTransfer") String numberTransfer) {
@@ -46,7 +46,7 @@ public class TransferController {
 		return transferService.findByNumber(numberTransfer);
 	}
 
-	//Save transaction
+	//Save Transfer
 	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
 	@PostMapping(value = "/saveTransfer")
 	public Mono<Transfer> saveTransfer(@RequestBody Transfer dataTransfer){
@@ -58,26 +58,11 @@ public class TransferController {
 				}).onErrorReturn(dataTransfer).onErrorResume(e -> Mono.just(dataTransfer))
 				.onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
 
-		Mono<Transfer> transactionMono = transferService.saveTransfer(dataTransfer,"deposit");
+		Mono<Transfer> transactionMono = transferService.saveTransfer(dataTransfer);
 		return transactionMono;
 	}
 
-	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
-	@PostMapping(value = "/saveTransferDestination")
-	public Mono<Transfer> saveTransferDestination(@RequestBody Transfer dataTransfer, @PathVariable("typeTransfer") String typeTransfer){
-		Mono.just(dataTransfer).doOnNext(t -> {
-
-					t.setCreationDate(new Date());
-					t.setModificationDate(new Date());
-
-				}).onErrorReturn(dataTransfer).onErrorResume(e -> Mono.just(dataTransfer))
-				.onErrorMap(f -> new InterruptedException(f.getMessage())).subscribe(x -> LOGGER.info(x.toString()));
-
-		Mono<Transfer> transactionMono = transferService.saveTransfer(dataTransfer,"withdraw");
-		return transactionMono;
-	}
-
-	//Update active
+	//Update Transfer
 	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
 	@PutMapping("/updateTransfer/{numberTransfer}")
 	public Mono<Transfer> updateTransfer(@PathVariable("numberTransfer") String numberTransfer,
@@ -95,20 +80,20 @@ public class TransferController {
 	}
 
 
-	//Delete customer
+	//Delete Transfer
 	@CircuitBreaker(name = "transfer", fallbackMethod = "fallBackGetTransfer")
 	@DeleteMapping("/deleteTransfer/{numberTransaction}")
 	public Mono<Void> deleteTransfer(@PathVariable("numberTransaction") String numberTransaction) {
-		LOGGER.info("Deleting transaction by numberTransaction: " + numberTransaction);
+		LOGGER.info("Deleting Transfer by numberTransfer: " + numberTransaction);
 		Mono<Void> delete = transferService.deleteTransfer(numberTransaction);
 		return delete;
 
 	}
 
 	private Mono<Transfer> fallBackGetTransfer(Exception e){
-		Transfer activeStaff= new Transfer();
-		Mono<Transfer> staffMono= Mono.just(activeStaff);
-		return staffMono;
+		Transfer transfer= new Transfer();
+		Mono<Transfer> transferMono= Mono.just(transfer);
+		return transferMono;
 	}
 
 
